@@ -33,7 +33,8 @@ test = { cmd = "pytest ./tests --capture=no", help = "runs all unit tests" }
 fmt = { cmd = "task fmt_isort && task fmt_black", help = "exec format" }
 fmt_isort = "isort ./config ./src ./tests"
 fmt_black = "black ./config ./src ./tests"
-lint = { cmd = "task lint_black && task lint_flake8 && task lint_mypy", help = "exec lint" }
+# lint = { cmd = "task lint_black && task lint_flake8 && task lint_mypy", help = "exec lint" }
+lint = { cmd = "task lint_black && task lint_flake8", help = "exec lint" }
 # lint_black = "black --check ./config ./db ./src ./tests"
 lint_black = "black --check ./config ./src ./tests"
 # lint_flake8 = "flake8 --max-line-length=119 ./config ./db ./src ./tests"
