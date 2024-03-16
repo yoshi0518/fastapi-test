@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Query, Path
 from pydantic import BaseModel, ConfigDict, field_serializer
 
 from config import config
@@ -9,7 +9,9 @@ fake_items_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"
 
 class Item(BaseModel):
     name: str
+    description: str | None = None
     price: float
+    tax: float | None = None
     is_offer: bool | None = None
 
     model_config = ConfigDict(strict=True)
@@ -30,17 +32,21 @@ def read_root() -> dict[str, str]:
 
 @app.get("/items/")
 async def read_items(skip: int = 0, limit: int = 10):
-    return fake_items_db[skip: skip + limit]
+    return fake_items_db[skip : skip + limit]
 
 
 @app.get("/items/{item_id}")
-async def read_item(item_id: int, q: str | None = None):
+async def read_item(item_id: int = Path(le=10), q: str | None = Query(default=None)):
     return {"item_id": item_id, "q": q}
 
 
 @app.put("/items/{item_id}")
 async def update_item(item_id: int, item: Item):
-    return {"item_id": item_id} | item.model_dump()
+    item_dict = item.model_dump()
+    if item.tax:
+        price_with_tax = item.price + item.tax
+        item_dict = item_dict | {"price_with_tax": price_with_tax}
+    return item_dict
 
 
 @app.get("/files/{file_path:path}")
