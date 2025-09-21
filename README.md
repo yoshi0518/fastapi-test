@@ -1,4 +1,4 @@
-# FastAPI Template
+# FastAPI Test
 
 ## Port(Host:Container)
 
@@ -15,7 +15,7 @@ Python 開発環境構築済
 ```bash
 # リポジトリをクローン
 $ rm -fr api
-$ git clone git@github.com:yoshi0518/fastapi-template.git api && cd api
+$ git clone git@github.com:yoshi0518/fastapi-test.git api && cd api
 
 # 仮想環境作成、パッケージをインストール
 $ uv venv

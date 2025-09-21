@@ -1,5 +1,5 @@
 [project]
-name = "fastapi-template"
+name = "fastapi-test"
 version = "1.0.0"
 description = ""
 authors = ["yoshi0518"]
