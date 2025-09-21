@@ -1,0 +1,18 @@
+{
+  "builds": [
+    {
+      "src": "src/__init__.py",
+      "use": "@vercel/python",
+      "config": {
+        "runtime": "python3.12",
+        "maxDuration": 60
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/__init__.py"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+.gitignore
+.python-version
+.ruff_cache
+.venv
+README.md
+__pycache__
