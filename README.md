@@ -61,6 +61,37 @@ $ task lint
 $ task typecheck
 ```
 
+### Alembic コマンド実行方法
+
+```bash
+# マイグレーションファイル作成(SQLAlchemy Modelから自動作成)
+$ alembic revision --autogenerate -m "xxx"
+
+# マイグレーションファイル作成(手動作成)
+$ alembic revision -m "xxx"
+
+# アップグレード(最新)
+$ alembic upgrade head
+
+# アップグレード(現バージョンから相対参照)
+$ alembic upgrade +1
+$ alembic upgrade +2
+
+# ダウングレード(現バージョンから相対参照)
+$ alembic downgrade -1
+$ alembic downgrade -2
+
+# ダウングレード(初期化)
+$ alembic downgrade base
+
+# 現時点の情報を確認
+$ alembic current
+
+# マイグレーション履歴を確認
+$ alembic history
+$ alembic history --verbose
+```
+
 ### requirements.txt の作成方法
 
 ```bash

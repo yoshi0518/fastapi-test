@@ -18,6 +18,13 @@ class Config(BaseSettings):
     # Cors
     cors_allow_origins: str = "http://localhost:3000"
 
+    # Neon
+    neon_host: str = "xxxxxxxxxx"
+    neon_db: str = "xxxxxxxxxx"
+    neon_user: str = "xxxxxxxxxx"
+    neon_password: str = "xxxxxxxxxx"
+    neon_schema: str = "xxxxxxxxxx"
+
 
 config = Config()
 
