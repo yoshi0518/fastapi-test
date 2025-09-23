@@ -11,3 +11,7 @@ wheels/
 
 # Ruff cache
 .ruff_cache/
+
+# env files (can opt-in for committing if needed)
+.env*
+!.env.sample

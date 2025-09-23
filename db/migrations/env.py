@@ -82,7 +82,6 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        version_table_schema=config_root.neon_schema,
     )
 
     with context.begin_transaction():
@@ -114,7 +113,6 @@ def run_migrations_online() -> None:
             compare_server_default=True,
             include_name=include_name,
             include_schemas=False,
-            version_table_schema=config_root.neon_schema,
         )
 
         with context.begin_transaction():

@@ -23,7 +23,6 @@ class Config(BaseSettings):
     neon_db: str = "xxxxxxxxxx"
     neon_user: str = "xxxxxxxxxx"
     neon_password: str = "xxxxxxxxxx"
-    neon_schema: str = "xxxxxxxxxx"
 
 
 config = Config()

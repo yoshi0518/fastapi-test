@@ -17,6 +17,9 @@ Python 開発環境構築済
 $ rm -fr api
 $ git clone git@github.com:yoshi0518/fastapi-test.git api && cd api
 
+# 環境変数ファイルをコピー、内容修正
+$ cp .env.sample .env
+
 # 仮想環境作成、パッケージをインストール
 $ uv venv
 $ uv sync

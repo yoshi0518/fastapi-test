@@ -1,9 +1,12 @@
 import uvicorn
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from starlette.middleware.cors import CORSMiddleware
 
 from config import config
+
+load_dotenv()
 
 app = FastAPI(
     title=config.fastapi_title,
