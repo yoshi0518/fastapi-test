@@ -30,6 +30,7 @@ dev = [
 fmt = { cmd = "ruff format ./config ./db ./src ./tests", help = "exec format" }
 lint = { cmd = "ruff check --fix ./config ./db ./src ./tests", help = "exec lint" }
 typecheck = { cmd = "ty check", help = "exec type check" }
+check = { cmd = "task fmt && task lint && task typecheck", help = "exec all check" }
 start = { cmd = "python src/__init__.py", help = "launch test server" }
 
 [tool.ruff]

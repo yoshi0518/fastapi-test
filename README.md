@@ -62,6 +62,9 @@ $ task lint
 
 # Typecheck
 $ task typecheck
+
+# All Check
+$ task check
 ```
 
 ### Alembic コマンド実行方法

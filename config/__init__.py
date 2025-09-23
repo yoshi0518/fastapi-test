@@ -2,7 +2,11 @@
 import os
 from pprint import pprint
 
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
+
+# .env読み込み
+load_dotenv()
 
 
 class Config(BaseSettings):

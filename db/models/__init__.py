@@ -1,10 +1,9 @@
 import uuid
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import Column, text
+from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import TIMESTAMP, UUID, VARCHAR
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.sql import func
 
 Base = declarative_base()
 
@@ -13,7 +12,7 @@ JST = timezone(timedelta(hours=9))
 
 
 def now_jst():
-    """現在時刻をAsia/Tokyoタイムゾーンで返す"""
+    """Asia/Tokyoタイムゾーンで現在日時を取得"""
     return datetime.now(JST)
 
 
@@ -27,7 +26,6 @@ class BaseTable(Base):
         TIMESTAMP(timezone=True),
         nullable=False,
         default=now_jst,
-        server_default=text("NOW() AT TIME ZONE 'Asia/Tokyo'"),
     )
     created_by = Column(VARCHAR(100), nullable=False)
     updated_at = Column(
@@ -35,6 +33,5 @@ class BaseTable(Base):
         nullable=False,
         default=now_jst,
         onupdate=now_jst,
-        server_default=text("NOW() AT TIME ZONE 'Asia/Tokyo'"),
     )
     updated_by = Column(VARCHAR(100), nullable=False)
