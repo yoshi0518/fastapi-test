@@ -45,12 +45,20 @@ jobs:
           vercel env rm FASTAPI_TITLE preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           vercel env rm FASTAPI_VERSION preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           vercel env rm CORS_ALLOW_ORIGINS preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm NEON_HOST preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm NEON_DB preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm NEON_USER preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm NEON_PASSWORD preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           echo -n "${{ secrets.DEBUG_PREVIEW }}" | vercel env add DEBUG preview --token=${{ secrets.VERCEL_TOKEN }}
           echo -n "${{ secrets.FASTAPI_HOST }}" | vercel env add FASTAPI_HOST preview --token=${{ secrets.VERCEL_TOKEN }}
           echo -n "${{ secrets.FASTAPI_PORT }}" | vercel env add FASTAPI_PORT preview --token=${{ secrets.VERCEL_TOKEN }}
           echo -n "${{ secrets.FASTAPI_TITLE_PREVIEW }}" | vercel env add FASTAPI_TITLE preview --token=${{ secrets.VERCEL_TOKEN }}
           echo -n "${{ secrets.FASTAPI_VERSION }}" | vercel env add FASTAPI_VERSION preview --token=${{ secrets.VERCEL_TOKEN }}
           echo -n "${{ secrets.CORS_ALLOW_ORIGINS }}" | vercel env add CORS_ALLOW_ORIGINS preview --token=${{ secrets.VERCEL_TOKEN }}
+          echo -n "${{ secrets.NEON_HOST }}" | vercel env add NEON_HOST preview --token=${{ secrets.VERCEL_TOKEN }}
+          echo -n "${{ secrets.NEON_DB }}" | vercel env add NEON_DB preview --token=${{ secrets.VERCEL_TOKEN }}
+          echo -n "${{ secrets.NEON_USER }}" | vercel env add NEON_USER preview --token=${{ secrets.VERCEL_TOKEN }}
+          echo -n "${{ secrets.NEON_PASSWORD }}" | vercel env add NEON_PASSWORD preview --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -74,6 +82,10 @@ jobs:
           FASTAPI_TITLE: ${{ secrets.FASTAPI_TITLE_PREVIEW }}
           FASTAPI_VERSION: ${{ secrets.FASTAPI_VERSION }}
           CORS_ALLOW_ORIGINS: ${{ secrets.CORS_ALLOW_ORIGINS }}
+          NEON_HOST: ${{ secrets.NEON_HOST }}
+          NEON_DB: ${{ secrets.NEON_DB }}
+          NEON_USER: ${{ secrets.NEON_USER }}
+          NEON_PASSWORD: ${{ secrets.NEON_PASSWORD }}
 
       - name: Deploy Project Artifacts to Vercel
         run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
@@ -86,3 +98,7 @@ jobs:
           FASTAPI_TITLE: ${{ secrets.FASTAPI_TITLE_PREVIEW }}
           FASTAPI_VERSION: ${{ secrets.FASTAPI_VERSION }}
           CORS_ALLOW_ORIGINS: ${{ secrets.CORS_ALLOW_ORIGINS }}
+          NEON_HOST: ${{ secrets.NEON_HOST }}
+          NEON_DB: ${{ secrets.NEON_DB }}
+          NEON_USER: ${{ secrets.NEON_USER }}
+          NEON_PASSWORD: ${{ secrets.NEON_PASSWORD }}
