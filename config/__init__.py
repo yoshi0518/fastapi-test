@@ -2,7 +2,11 @@
 import os
 from pprint import pprint
 
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
+
+# .env読み込み
+load_dotenv()
 
 
 class Config(BaseSettings):
@@ -17,6 +21,12 @@ class Config(BaseSettings):
 
     # Cors
     cors_allow_origins: str = "http://localhost:3000"
+
+    # Neon
+    neon_host: str = "xxxxxxxxxx"
+    neon_db: str = "xxxxxxxxxx"
+    neon_user: str = "xxxxxxxxxx"
+    neon_password: str = "xxxxxxxxxx"
 
 
 config = Config()

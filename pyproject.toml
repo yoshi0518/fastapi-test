@@ -6,11 +6,16 @@ authors = ["yoshi0518"]
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "alembic>=1.16.5",
     "fastapi>=0.116.1",
     "gunicorn>=23.0.0",
     "orjson>=3.11.3",
+    "psycopg2-binary>=2.9.10",
     "pydantic>=2.11.7",
     "pydantic-settings>=2.10.1",
+    "python-dotenv>=1.1.1",
+    "sqlalchemy>=2.0.43",
+    "sqlalchemy-utils>=0.42.0",
     "uvicorn[standard]>=0.35.0",
 ]
 
@@ -22,9 +27,10 @@ dev = [
 ]
 
 [tool.taskipy.tasks]
-fmt = { cmd = "ruff format .", help = "exec format" }
-lint = { cmd = "ruff check --fix .", help = "exec lint" }
+fmt = { cmd = "ruff format ./config ./db ./src ./tests", help = "exec format" }
+lint = { cmd = "ruff check --fix ./config ./db ./src ./tests", help = "exec lint" }
 typecheck = { cmd = "ty check", help = "exec type check" }
+check = { cmd = "task fmt && task lint && task typecheck", help = "exec all check" }
 start = { cmd = "python src/__init__.py", help = "launch test server" }
 
 [tool.ruff]

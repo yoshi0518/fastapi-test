@@ -17,6 +17,9 @@ Python 開発環境構築済
 $ rm -fr api
 $ git clone git@github.com:yoshi0518/fastapi-test.git api && cd api
 
+# 環境変数ファイルをコピー、内容修正
+$ cp .env.sample .env
+
 # 仮想環境作成、パッケージをインストール
 $ uv venv
 $ uv sync
@@ -59,6 +62,40 @@ $ task lint
 
 # Typecheck
 $ task typecheck
+
+# All Check
+$ task check
+```
+
+### Alembic コマンド実行方法
+
+```bash
+# マイグレーションファイル作成(SQLAlchemy Modelから自動作成)
+$ alembic revision --autogenerate -m "xxx"
+
+# マイグレーションファイル作成(手動作成)
+$ alembic revision -m "xxx"
+
+# アップグレード(最新)
+$ alembic upgrade head
+
+# アップグレード(現バージョンから相対参照)
+$ alembic upgrade +1
+$ alembic upgrade +2
+
+# ダウングレード(現バージョンから相対参照)
+$ alembic downgrade -1
+$ alembic downgrade -2
+
+# ダウングレード(初期化)
+$ alembic downgrade base
+
+# 現時点の情報を確認
+$ alembic current
+
+# マイグレーション履歴を確認
+$ alembic history
+$ alembic history --verbose
 ```
 
 ### requirements.txt の作成方法
