@@ -202,6 +202,46 @@ class BaseCrud:
         }
 
         return {
-            "contents": data,
+            "data": data,
             "headers": headers,
         }
+
+    async def read(
+        self,
+        request: Request,
+        id: str,
+        columns: list[str] | None = None,
+    ) -> ModelType | dict | None:
+        """取得"""
+
+        # 指定した取得項目が存在しない場合
+        check_columns = self.check_exists_column(columns)
+        if check_columns is True:
+            return {"column_check": "Select Column Not Found"}
+
+        if columns is None:
+            sql = select(self.model).where(self.model.id == id)
+        else:
+            sql = select(*[getattr(self.model, column) for column in columns if hasattr(self.model, column)]).where(
+                self.model.id == id
+            )
+
+        # === DB操作ログ出力 Start ===
+        if config.debug:
+            log: dict = self.get_dblog_dict(request)
+            log["table"] = self.model.__tablename__
+            log["type"] = "read"
+            log["sql"] = str(sql).replace("\n", "")
+            log["id"] = id
+
+            print("=== ↓↓↓ Db Access Log ↓↓↓ ===")
+            pprint(json.dumps(log, default=type_serializer, ensure_ascii=False))
+            print("=== ↑↑↑ Db Access Log ↑↑↑ ===")
+        # === DB操作ログ出力 End ===
+
+        data = (await self.session.execute(sql)).scalars().first()
+
+        if data is None:
+            return None
+        else:
+            return data
