@@ -46,7 +46,7 @@ class UsersController:
         if isinstance(response, dict) and "column_check" in response:
             return {
                 "headers": {},
-                "contents": JSONResponse(
+                "data": JSONResponse(
                     status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                     content={"detail": response["column_check"]},
                 ),
@@ -56,7 +56,7 @@ class UsersController:
         if response["headers"]["x-total-count"] == 0:
             return {
                 "headers": {},
-                "contents": JSONResponse(
+                "data": JSONResponse(
                     status_code=status.HTTP_404_NOT_FOUND,
                     content={"detail": "Not Found"},
                 ),

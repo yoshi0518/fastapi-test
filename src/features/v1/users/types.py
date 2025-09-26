@@ -4,23 +4,21 @@ from pydantic import UUID4, BaseModel, ConfigDict, Field
 from typing_extensions import TypedDict
 
 example_json_schema = {
-    "example": {
-        "user_id": 1,
-        "name": "text",
-        "username": "text",
-        "email": "text",
-        "address_street": "text",
-        "address_suite": "text",
-        "address_city": "text",
-        "address_zipcode": "text",
-        "geo_lat": 123.45,
-        "geo_lng": 123.45,
-        "phone": "text",
-        "website": "text",
-        "company_name": "text",
-        "company_catch_phrase": "text",
-        "company_bs": "text",
-    }
+    "user_id": 1,
+    "name": "text",
+    "username": "text",
+    "email": "text",
+    "address_street": "text",
+    "address_suite": "text",
+    "address_city": "text",
+    "address_zipcode": "text",
+    "geo_lat": 123.45,
+    "geo_lng": 123.45,
+    "phone": "text",
+    "website": "text",
+    "company_name": "text",
+    "company_catch_phrase": "text",
+    "company_bs": "text",
 }
 
 

@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import get_db
 from src.features.v1.users.controllers import UsersController
-from src.features.v1.users.types import ReadUserSchema
+from src.features.v1.users.types import ReadUserSchema, example_json_schema
 
 router_v1_users = APIRouter(default_response_class=ORJSONResponse)
 
@@ -12,7 +12,38 @@ router_v1_users = APIRouter(default_response_class=ORJSONResponse)
 @router_v1_users.get(
     "/",
     summary="ユーザー一覧を取得",
-    responses={},
+    responses={
+        200: {
+            "content": {
+                "application/json": {
+                    "example": [
+                        {
+                            **example_json_schema,
+                            **{
+                                "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                                "created_at": "2026-01-01T00:00:00",
+                                "created_by": "text",
+                                "updated_at": "2026-01-01T00:00:00",
+                                "updated_by": "text",
+                            },
+                        }
+                    ],
+                },
+            },
+        },
+        401: {
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Not authenticated"},
+                },
+            },
+        },
+        404: {
+            "content": {
+                "application/json": {"example": {"detail": "Not Found"}},
+            },
+        },
+    },
     response_model=list[ReadUserSchema],
     response_model_exclude_unset=True,
 )
@@ -27,7 +58,7 @@ async def reads_table(
     limit: int = Query(10, ge=1, le=300, description="1ページあたりの取得件数"),
     page: int = Query(1, ge=1, description="取得するページ"),
 ):
-    data = await UsersController.reads_table(
+    response = await UsersController.reads_table(
         request,
         session,
         user_id,
@@ -38,5 +69,5 @@ async def reads_table(
         page,
     )
 
-    response.headers.update(data["headers"])
-    return data["contents"]
+    response.headers.update(response["headers"])
+    return response["data"]
