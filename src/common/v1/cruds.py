@@ -1,11 +1,11 @@
 import json
 import math
-from datetime import timedelta, timezone
+from datetime import datetime, timedelta, timezone
 from pprint import pprint
 from typing import TypeVar
 
 from fastapi import Request
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import func, selectable
 
@@ -21,8 +21,8 @@ ModelType = TypeVar("ModelType", bound=Base)
 
 
 class BaseCrud:
-    model: type[ModelType] | None = None
-    session: AsyncSession | None = None
+    model: type[ModelType]
+    session: AsyncSession
     orders: str
 
     def __init__(self, session: AsyncSession) -> None:
@@ -219,6 +219,7 @@ class BaseCrud:
         if check_columns is True:
             return {"column_check": "Select Column Not Found"}
 
+        # === SELECT ===
         if columns is None:
             sql = select(self.model).where(self.model.id == id)
         else:
@@ -239,9 +240,255 @@ class BaseCrud:
             print("=== ↑↑↑ Db Access Log ↑↑↑ ===")
         # === DB操作ログ出力 End ===
 
-        data = (await self.session.execute(sql)).scalars().first()
+        data = (await self.session.execute(sql)).first()
 
         if data is None:
             return None
+        elif columns is None:
+            return data[0]
         else:
             return data
+
+    async def create(
+        self,
+        request: Request,
+        data: dict,
+        commit: bool = True,
+    ) -> ModelType:
+        """登録"""
+
+        # 登録準備
+        obj = self.model()
+        for key, value in data.items():
+            if hasattr(obj, key) and key not in [
+                "id",
+                "created_at",
+                "created_by",
+                "updated_at",
+                "updated_by",
+            ]:
+                setattr(obj, key, value)
+        obj.created_at = datetime.now(JST)
+        obj.created_by = request.state.request_user_id if hasattr(request.state, "request_user_id") else "NonLoginFunc"
+        obj.updated_at = datetime.now(JST)
+        obj.updated_by = request.state.request_user_id if hasattr(request.state, "request_user_id") else "NonLoginFunc"
+
+        # 登録
+        self.session.add(obj)
+        if commit:
+            await self.session.commit()
+            await self.session.refresh(obj)
+
+        # === DB操作ログ出力 Start ===
+        if config.debug:
+            log: dict = self.get_dblog_dict(request)
+            log["table"] = self.model.__tablename__
+            log["type"] = "create"
+            log["commit"] = commit
+            log["data"] = data
+            log["id"] = obj.id
+
+            print("=== ↓↓↓ Db Access Log ↓↓↓ ===")
+            pprint(json.dumps(log, default=type_serializer, ensure_ascii=False))
+            print("=== ↑↑↑ Db Access Log ↑↑↑ ===")
+        # === DB操作ログ出力 End ===
+
+        return obj
+
+    async def update(
+        self,
+        request: Request,
+        id: str,
+        data: dict,
+        obj: ModelType,
+        commit: bool = True,
+    ):
+        """更新"""
+
+        # 更新準備
+        for key, value in data.items():
+            if hasattr(obj, key) and key not in [
+                "id",
+                "created_at",
+                "created_by",
+            ]:
+                setattr(obj, key, value)
+        obj.updated_at = datetime.now(JST)
+        obj.updated_by = request.state.request_user_id if hasattr(request.state, "request_user_id") else "NonLoginFunc"
+
+        # 更新
+        self.session.add(obj)
+        if commit:
+            await self.session.commit()
+            await self.session.refresh(obj)
+
+        # === DB操作ログ出力 Start ===
+        if config.debug:
+            log: dict = self.get_dblog_dict(request)
+            log["table"] = self.model.__tablename__
+            log["type"] = "update"
+            log["commit"] = commit
+            log["data"] = data
+            log["id"] = id
+
+            print("=== ↓↓↓ Db Access Log ↓↓↓ ===")
+            pprint(json.dumps(log, default=type_serializer, ensure_ascii=False))
+            print("=== ↑↑↑ Db Access Log ↑↑↑ ===")
+        # === DB操作ログ出力 End ===
+
+    async def delete(
+        self,
+        request: Request,
+        id: str,
+        obj: ModelType,
+        commit: bool = True,
+    ):
+        """削除"""
+
+        # 削除
+        await self.session.delete(obj)
+        if commit:
+            await self.session.commit()
+
+        # === DB操作ログ出力 Start ===
+        if config.debug:
+            log: dict = self.get_dblog_dict(request)
+            log["table"] = self.model.__tablename__
+            log["type"] = "delete"
+            log["commit"] = commit
+            log["id"] = id
+
+            print("=== ↓↓↓ Db Access Log ↓↓↓ ===")
+            pprint(json.dumps(log, default=type_serializer, ensure_ascii=False))
+            print("=== ↑↑↑ Db Access Log ↑↑↑ ===")
+        # === DB操作ログ出力 End ===
+
+    async def delete_filter(
+        self,
+        request: Request,
+        condition: dict,
+        commit: bool = True,
+    ):
+        """条件削除"""
+
+        # === DELETE ===
+        sql = delete(self.model)
+
+        # === WHERE ===
+        sql = self.set_delete_filter(sql, condition)
+
+        # 条件削除
+        await self.session.execute(sql)
+        if commit:
+            await self.session.commit()
+
+        # === DB操作ログ出力 Start ===
+        if config.debug:
+            log: dict = self.get_dblog_dict(request)
+            log["table"] = self.model.__tablename__
+            log["type"] = "delete_filter"
+            log["commit"] = commit
+            log["sql"] = str(sql).replace("\n", "")
+            log["condition"] = condition
+
+            print("=== ↓↓↓ Db Access Log ↓↓↓ ===")
+            pprint(json.dumps(log, default=type_serializer, ensure_ascii=False))
+            print("=== ↑↑↑ Db Access Log ↑↑↑ ===")
+        # === DB操作ログ出力 End ===
+
+    async def delete_all(
+        self,
+        request: Request,
+        commit: bool = True,
+    ):
+        """全件削除"""
+
+        # === DELETE ===
+        sql = delete(self.model)
+
+        # 全件削除
+        await self.session.execute(sql)
+        if commit:
+            await self.session.commit()
+
+        # === DB操作ログ出力 Start ===
+        if config.debug:
+            log: dict = self.get_dblog_dict(request)
+            log["table"] = self.model.__tablename__
+            log["type"] = "delete_all"
+            log["commit"] = commit
+            log["sql"] = str(sql).replace("\n", "")
+
+            print("=== ↓↓↓ Db Access Log ↓↓↓ ===")
+            pprint(json.dumps(log, default=type_serializer, ensure_ascii=False))
+            print("=== ↑↑↑ Db Access Log ↑↑↑ ===")
+        # === DB操作ログ出力 End ===
+
+    async def get_select_sql(
+        self,
+        request: Request,
+        condition: dict,
+        columns: list[str] | None = None,
+        orders: list[str] | None = None,
+        limit: int = 10,
+        page: int = 1,
+    ) -> selectable.Select | dict:
+        """SELECT SQL取得"""
+
+        # 指定した取得項目が存在しない場合
+        check_columns = self.check_exists_column(columns)
+        if check_columns is True:
+            return {"column_check": "Select Column Not Found"}
+
+        # 指定した並べ替え項目が存在しない場合
+        check_orders = self.check_exists_column(orders)
+        if check_orders is True:
+            return {"column_check": "Order Column Not Found"}
+
+        # 取得件数が0件の場合
+        range_info = await self.get_range(request, condition, limit, page)
+        if range_info["total_count"] == 0:
+            return {
+                "data": [],
+                "headers": {"x-total-count": 0},
+            }
+
+        # === SELECT ===
+        if columns is None:
+            sql = select(self.model)
+        else:
+            sql = select(*[getattr(self.model, column) for column in columns if hasattr(self.model, column)])
+
+        # === WHERE ===
+        sql = self.set_select_filter(sql, condition)
+
+        # === ORDER BY ===
+        if orders is not None:
+            sql = self.set_order(sql, orders)
+        elif self.orders is not None:
+            sql = self.set_order(sql, self.orders.split(","))
+
+        # === OFFSET ===
+        if range_info["offset"] > 0:
+            sql = sql.offset(range_info["offset"])
+
+        # === LIMIT ===
+        if limit is not None and limit < range_info["total_count"]:
+            sql = sql.limit(limit)
+
+        # === DB操作ログ出力 Start ===
+        if config.debug:
+            log: dict = self.get_dblog_dict(request)
+            log["table"] = self.model.__tablename__
+            log["type"] = "get_select_sql"
+            log["sql"] = str(sql).replace("\n", "")
+            log["condition"] = condition
+            log["offset"] = range_info["offset"]
+            log["limit"] = limit
+
+            print("=== ↓↓↓ Db Access Log ↓↓↓ ===")
+            pprint(json.dumps(log, default=type_serializer, ensure_ascii=False))
+            print("=== ↑↑↑ Db Access Log ↑↑↑ ===")
+        # === DB操作ログ出力 End ===
+
+        return sql
