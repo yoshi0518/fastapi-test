@@ -1,18 +1,21 @@
 import uvicorn
-from fastapi import Depends, FastAPI, Request
+from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.middleware.cors import CORSMiddleware
 
 from config import config
-from db import get_db
 from src.features.v1 import router_v1
+
+TAGS = [
+    {"name": "v1", "description": "version 1"},
+    {"name": "v2", "description": "version 2"},
+]
 
 app = FastAPI(
     title=config.fastapi_title,
     version=config.fastapi_version,
     default_response_class=ORJSONResponse,
+    openapi_tags=TAGS,
 )
 
 # CORS設定
@@ -26,18 +29,8 @@ app.add_middleware(
 )
 
 
-@app.get("/")
-async def read_root(request: Request, session: AsyncSession = Depends(get_db)):
-    return {"hello": "world"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None = None):
-    return {"item_id": item_id, "q": q}
-
-
 # Router設定
-app.include_router(router_v1, prefix="/v1")
+app.include_router(router_v1, prefix="/v1", tags=["v1"])
 
 
 if __name__ == "__main__":

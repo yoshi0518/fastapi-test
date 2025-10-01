@@ -2,38 +2,38 @@ from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.features.v1.users.cruds import UsersCrud
-from src.features.v1.users.types import ConditionUserType
+from src.features.v1.todos.cruds import TodosCrud
+from src.features.v1.todos.types import ConditionTodoType
 
 
-class UsersController:
+class TodosController:
     @classmethod
     async def reads_table(
         cls,
         request: Request,
         session: AsyncSession,
-        user_id: int | None,
-        name: str | None,
+        todo_id: int | None,
+        title: str | None,
         columns: str | None = None,
         orders: str | None = None,
         limit: int = 10,
         page: int = 1,
     ):
         # === 取得条件設定 Start ===
-        condition = ConditionUserType(
-            user_id=None,
-            name=None,
+        condition = ConditionTodoType(
+            todo_id=None,
+            title=None,
         )
 
-        if user_id is not None:
-            condition.user_id = user_id
+        if todo_id is not None:
+            condition.todo_id = todo_id
 
-        if name is not None:
-            condition.name = name
+        if title is not None:
+            condition.title = title
         # === 取得条件設定 End ===
 
         # データ取得
-        result = await UsersCrud(session).reads(
+        result = await TodosCrud(session).reads(
             request,
             condition,
             columns.split(",") if columns is not None else None,
@@ -73,7 +73,7 @@ class UsersController:
         columns: str | None = None,
     ):
         # データ取得
-        obj = await UsersCrud(session).read(
+        obj = await TodosCrud(session).read(
             request,
             id,
             columns.split(",") if columns is not None else None,
@@ -103,7 +103,7 @@ class UsersController:
         data: dict,
     ):
         # 重複チェック
-        count = await UsersCrud(session).count(request, ConditionUserType(user_id=data["user_id"]))
+        count = await TodosCrud(session).count(request, ConditionTodoType(todo_id=data["todo_id"]))
         if count > 0:
             return JSONResponse(
                 status_code=status.HTTP_409_CONFLICT,
@@ -111,7 +111,7 @@ class UsersController:
             )
 
         # 登録
-        obj = await UsersCrud(session).create(request, data)
+        obj = await TodosCrud(session).create(request, data)
         return {"id": obj.id}
 
     @classmethod
@@ -123,7 +123,7 @@ class UsersController:
         data: dict,
     ):
         # 存在チェック
-        obj = await UsersCrud(session).read(request, id)
+        obj = await TodosCrud(session).read(request, id)
         if obj is None:
             return JSONResponse(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -131,10 +131,10 @@ class UsersController:
             )
 
         # 更新準備
-        if "user_id" in data:
-            del data["user_id"]
+        if "todo_id" in data:
+            del data["todo_id"]
 
-        await UsersCrud(session).update(request, id, data, obj)
+        await TodosCrud(session).update(request, id, data, obj)
 
     @classmethod
     async def delete(
@@ -144,11 +144,11 @@ class UsersController:
         id: str,
     ):
         # 存在チェック
-        obj = await UsersCrud(session).read(request, id)
+        obj = await TodosCrud(session).read(request, id)
         if obj is None:
             return JSONResponse(
                 status_code=status.HTTP_404_NOT_FOUND,
                 content={"detail": "Not Found"},
             )
 
-        await UsersCrud(session).delete(request, id, obj)
+        await TodosCrud(session).delete(request, id, obj)

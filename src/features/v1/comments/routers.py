@@ -4,15 +4,20 @@ from pydantic import UUID4
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import get_db
-from src.features.v1.users.controllers import UsersController
-from src.features.v1.users.types import CreateUserSchema, ReadUserSchema, UpdateUserSchema, example_json_schema
+from src.features.v1.comments.controllers import CommentsController
+from src.features.v1.comments.types import (
+    CreateCommentSchema,
+    ReadCommentSchema,
+    UpdateCommentSchema,
+    example_json_schema,
+)
 
-router_v1_users = APIRouter(default_response_class=ORJSONResponse)
+router_v1_comments = APIRouter(default_response_class=ORJSONResponse)
 
 
-@router_v1_users.get(
+@router_v1_comments.get(
     "/",
-    summary="ユーザー一覧を取得",
+    summary="コメント一覧を取得",
     responses={
         200: {
             "content": {
@@ -45,24 +50,24 @@ router_v1_users = APIRouter(default_response_class=ORJSONResponse)
             },
         },
     },
-    response_model=list[ReadUserSchema],
+    response_model=list[ReadCommentSchema],
     response_model_exclude_unset=True,
 )
 async def reads_table(
     request: Request,
     response: Response,
     session: AsyncSession = Depends(get_db),
-    user_id: int = Query(None, description="ユーザーID  ※完全一致"),
-    name: str = Query(None, description="ユーザー名  ※部分一致"),
+    comment_id: int = Query(None, description="コメントID  ※完全一致"),
+    name: str = Query(None, description="タイトル  ※部分一致"),
     columns: str | None = Query(None, description="取得項目"),
     orders: str | None = Query(None, description="並び順"),
     limit: int = Query(10, ge=1, le=300, description="1ページあたりの取得件数"),
     page: int = Query(1, ge=1, description="取得するページ"),
 ):
-    result = await UsersController.reads_table(
+    result = await CommentsController.reads_table(
         request,
         session,
-        user_id,
+        comment_id,
         name,
         columns,
         orders,
@@ -74,9 +79,9 @@ async def reads_table(
     return result["data"]
 
 
-@router_v1_users.get(
+@router_v1_comments.get(
     "/{id}/",
-    summary="ユーザーを取得",
+    summary="コメントを取得",
     responses={
         200: {
             "content": {
@@ -107,7 +112,7 @@ async def reads_table(
             },
         },
     },
-    response_model=ReadUserSchema,
+    response_model=ReadCommentSchema,
     response_model_exclude_unset=True,
 )
 async def read_table(
@@ -116,7 +121,7 @@ async def read_table(
     id: UUID4 = Path(..., description="ID"),
     columns: str | None = Query(None, description="取得項目"),
 ):
-    return await UsersController.read_table(
+    return await CommentsController.read_table(
         request,
         session,
         id,
@@ -124,9 +129,9 @@ async def read_table(
     )
 
 
-@router_v1_users.post(
+@router_v1_comments.post(
     "/",
-    summary="ユーザーを登録",
+    summary="コメントを登録",
     status_code=status.HTTP_201_CREATED,
     responses={
         201: {
@@ -155,18 +160,18 @@ async def read_table(
 async def create(
     request: Request,
     session: AsyncSession = Depends(get_db),
-    data: CreateUserSchema = Body(..., description="登録データ"),
+    data: CreateCommentSchema = Body(..., description="登録データ"),
 ):
-    return await UsersController.create(
+    return await CommentsController.create(
         request,
         session,
         data.model_dump(),
     )
 
 
-@router_v1_users.put(
+@router_v1_comments.put(
     "/{id}/",
-    summary="ユーザーを更新",
+    summary="コメントを更新",
     status_code=status.HTTP_204_NO_CONTENT,
     responses={
         401: {
@@ -187,9 +192,9 @@ async def update(
     request: Request,
     session: AsyncSession = Depends(get_db),
     id: UUID4 = Path(..., description="ID"),
-    data: UpdateUserSchema = Body(..., description="更新データ"),
+    data: UpdateCommentSchema = Body(..., description="更新データ"),
 ):
-    return await UsersController.update(
+    return await CommentsController.update(
         request,
         session,
         id,
@@ -197,9 +202,9 @@ async def update(
     )
 
 
-@router_v1_users.delete(
+@router_v1_comments.delete(
     "/{id}/",
-    summary="ユーザーを削除",
+    summary="コメントを削除",
     status_code=status.HTTP_204_NO_CONTENT,
     responses={
         401: {
@@ -221,7 +226,7 @@ async def delete(
     session: AsyncSession = Depends(get_db),
     id: UUID4 = Path(..., description="ID"),
 ):
-    return await UsersController.delete(
+    return await CommentsController.delete(
         request,
         session,
         id,

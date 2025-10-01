@@ -1,23 +1,23 @@
 from fastapi import Request
 from sqlalchemy.sql import selectable
 
-from db.models.users import UsersTable
+from db.models.comments import CommentsTable
 from src.common.v1.cruds import BaseCrud
-from src.features.v1.users.types import ConditionUserType
+from src.features.v1.comments.types import ConditionCommentType
 
 
-class UsersCrud(BaseCrud):
-    model = UsersTable
-    orders = "user_id"
+class CommentsCrud(BaseCrud):
+    model = CommentsTable
+    orders = "comment_id"
 
-    def set_select_filter(self, sql: selectable.Select, condition: ConditionUserType) -> selectable.Select:
+    def set_select_filter(self, sql: selectable.Select, condition: ConditionCommentType) -> selectable.Select:
         """抽出条件を追加したSQLを返却"""
 
-        if condition.user_id is not None:
-            sql = sql.where(UsersTable.user_id == condition.user_id)
+        if condition.comment_id is not None:
+            sql = sql.where(CommentsTable.comment_id == condition.comment_id)
 
         if condition.name is not None:
-            sql = sql.where(UsersTable.name.contains(condition.name))
+            sql = sql.where(CommentsTable.name.contains(condition.name))
 
         return sql
 
@@ -26,7 +26,7 @@ class UsersCrud(BaseCrud):
         request: Request,
         id: str,
         columns: list[str] | None = None,
-    ) -> UsersTable | dict | None:
+    ) -> CommentsTable | dict | None:
         """取得"""
 
         return await super().read(request, id, columns)
@@ -36,7 +36,7 @@ class UsersCrud(BaseCrud):
         request: Request,
         data: dict,
         commit: bool = True,
-    ) -> UsersTable:
+    ) -> CommentsTable:
         """登録"""
 
         return await super().create(request, data, commit)

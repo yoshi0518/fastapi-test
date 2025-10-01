@@ -6,7 +6,7 @@ from db.models import Base, BaseTable
 Base = Base
 
 
-class CommentssTable(BaseTable):
+class CommentsTable(BaseTable):
     __tablename__ = "t_comments"
     __table_args__ = (
         UniqueConstraint("comment_id"),
