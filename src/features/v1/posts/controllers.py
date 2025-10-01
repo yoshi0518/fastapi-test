@@ -124,8 +124,6 @@ class PostsController:
     ):
         # 存在チェック
         obj = await PostsCrud(session).read(request, id)
-        print("★★★")
-        print(obj)
         if obj is None:
             return JSONResponse(
                 status_code=status.HTTP_404_NOT_FOUND,

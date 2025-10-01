@@ -8,7 +8,7 @@ from src.features.v1.posts.types import ConditionPostType
 
 class PostsCrud(BaseCrud):
     model = PostsTable
-    orders = "user_id"
+    orders = "post_id"
 
     def set_select_filter(self, sql: selectable.Select, condition: ConditionPostType) -> selectable.Select:
         """抽出条件を追加したSQLを返却"""
