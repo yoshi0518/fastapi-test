@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from pydantic import UUID4, BaseModel, ConfigDict, Field
-from typing_extensions import TypedDict
 
 example_json_schema = {
     "user_id": 1,
@@ -60,6 +59,6 @@ class UpdateUserSchema(BaseUserSchema):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ConditionUserType(TypedDict):
+class ConditionUserType(BaseModel):
     user_id: int | None = None
     name: str | None = None

@@ -11,12 +11,15 @@ from sqlalchemy.sql import func, selectable
 
 from config import config
 from db import Base
-from src.common.v1.types import DblogDictType, RangeType
 from src.utils.v1.json import type_serializer
 
 # タイムゾーン生成
 JST = timezone(timedelta(hours=+9), "JST")
 
+# Generic用型パラメータ
+T = TypeVar("T")
+
+# モデルタイプ
 ModelType = TypeVar("ModelType", bound=Base)
 
 
@@ -28,7 +31,7 @@ class BaseCrud:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    def get_dblog_dict(self, request: Request) -> DblogDictType:
+    def get_dblog_dict(self, request: Request):
         """RequestオブジェクトからリクエストID、実行日時、ユーザーIDを取得"""
         return {
             "request_id": getattr(request.state, "request_id", None),
@@ -49,7 +52,7 @@ class BaseCrud:
 
         return False
 
-    async def get_range(self, request: Request, condition: dict, limit: int, page: int) -> RangeType:
+    async def get_range(self, request: Request, condition: T, limit: int, page: int):
         """取得開始位置・件数を取得、ヘッダー情報準備"""
         # データ件数
         total_count = await self.count(request, condition)
@@ -81,11 +84,11 @@ class BaseCrud:
             "offset": offset,
         }
 
-    def set_select_filter(self, sql: selectable.Select, condition: dict) -> selectable.Select:
+    def set_select_filter(self, sql: selectable.Select, condition: T) -> selectable.Select:
         """抽出条件を追加したSQLを返却"""
         return sql
 
-    def set_delete_filter(self, sql: selectable.Select, condition: dict) -> selectable.Select:
+    def set_delete_filter(self, sql: selectable.Select, condition: T) -> selectable.Select:
         """削除条件を追加したSQLを返却"""
         return sql
 
@@ -102,7 +105,7 @@ class BaseCrud:
 
         return sql
 
-    async def count(self, request: Request, condition: dict) -> int:
+    async def count(self, request: Request, condition: T) -> int:
         """件数取得"""
 
         # === SELECT ===
@@ -117,7 +120,7 @@ class BaseCrud:
             log["table_name"] = self.model.__tablename__
             log["sql_type"] = "count"
             log["sql"] = str(sql).replace("\n", "")
-            log["condition"] = condition
+            log["condition"] = condition.model_dump()  # ty: ignore[unresolved-attribute]
 
             print("=== ↓↓↓ Db Access Log ↓↓↓ ===")
             pprint(json.dumps(log, default=type_serializer, ensure_ascii=False))
@@ -129,7 +132,7 @@ class BaseCrud:
     async def reads(
         self,
         request: Request,
-        condition: dict,
+        condition: T,
         columns: list[str] | None = None,
         orders: list[str] | None = None,
         limit: int = 10,
@@ -184,7 +187,7 @@ class BaseCrud:
             log["table"] = self.model.__tablename__
             log["type"] = "reads"
             log["sql"] = str(sql).replace("\n", "")
-            log["condition"] = condition
+            log["condition"] = condition.model_dump()  # ty: ignore[unresolved-attribute]
             log["offset"] = range_info["offset"]
             log["limit"] = limit
 
@@ -366,7 +369,7 @@ class BaseCrud:
     async def delete_filter(
         self,
         request: Request,
-        condition: dict,
+        condition: T,
         commit: bool = True,
     ):
         """条件削除"""
@@ -389,7 +392,7 @@ class BaseCrud:
             log["type"] = "delete_filter"
             log["commit"] = commit
             log["sql"] = str(sql).replace("\n", "")
-            log["condition"] = condition
+            log["condition"] = condition.model_dump()  # ty: ignore[unresolved-attribute]
 
             print("=== ↓↓↓ Db Access Log ↓↓↓ ===")
             pprint(json.dumps(log, default=type_serializer, ensure_ascii=False))
@@ -427,7 +430,7 @@ class BaseCrud:
     async def get_select_sql(
         self,
         request: Request,
-        condition: dict,
+        condition: T,
         columns: list[str] | None = None,
         orders: list[str] | None = None,
         limit: int = 10,
@@ -482,7 +485,7 @@ class BaseCrud:
             log["table"] = self.model.__tablename__
             log["type"] = "get_select_sql"
             log["sql"] = str(sql).replace("\n", "")
-            log["condition"] = condition
+            log["condition"] = condition.model_dump()  # ty: ignore[unresolved-attribute]
             log["offset"] = range_info["offset"]
             log["limit"] = limit
 

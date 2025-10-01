@@ -1,12 +1,9 @@
 import uvicorn
-from fastapi import Depends, FastAPI, Request
+from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.middleware.cors import CORSMiddleware
 
 from config import config
-from db import get_db
 from src.features.v1 import router_v1
 
 app = FastAPI(
@@ -24,16 +21,6 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["*"],
 )
-
-
-@app.get("/")
-async def read_root(request: Request, session: AsyncSession = Depends(get_db)):
-    return {"hello": "world"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None = None):
-    return {"item_id": item_id, "q": q}
 
 
 # Router設定
