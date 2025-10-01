@@ -1,7 +1,11 @@
+from pprint import pprint
+
+import requests
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from config import config
 from src.features.v1.todos.cruds import TodosCrud
 from src.features.v1.todos.types import ConditionTodoType
 
@@ -152,3 +156,33 @@ class TodosController:
             )
 
         await TodosCrud(session).delete(request, id, obj)
+
+    @classmethod
+    async def exec_update(
+        cls,
+        request: Request,
+        session: AsyncSession,
+    ):
+        # 全件削除
+        await TodosCrud(session).delete_all(request)
+
+        # データ取得
+        response = requests.get("https://jsonplaceholder.typicode.com/todos")
+
+        if config.debug is True:
+            print(response.status_code)
+            pprint(response.json())
+
+        # データ追加
+        for data in response.json():
+            await TodosCrud(session).create(
+                request,
+                {
+                    "todo_id": data["id"],
+                    "user_id": data["userId"],
+                    "title": data["title"],
+                    "completed": 1 if data["completed"] is True else 0,
+                },
+            )
+
+        return {"status": "success"}

@@ -1,7 +1,11 @@
+from pprint import pprint
+
+import requests
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from config import config
 from src.features.v1.users.cruds import UsersCrud
 from src.features.v1.users.types import ConditionUserType
 
@@ -152,3 +156,44 @@ class UsersController:
             )
 
         await UsersCrud(session).delete(request, id, obj)
+
+    @classmethod
+    async def exec_update(
+        cls,
+        request: Request,
+        session: AsyncSession,
+    ):
+        # 全件削除
+        await UsersCrud(session).delete_all(request)
+
+        # データ取得
+        response = requests.get("https://jsonplaceholder.typicode.com/users")
+
+        if config.debug is True:
+            print(response.status_code)
+            pprint(response.json())
+
+        # データ追加
+        for data in response.json():
+            await UsersCrud(session).create(
+                request,
+                {
+                    "user_id": data["id"],
+                    "name": data["name"],
+                    "username": data["username"],
+                    "email": data["email"],
+                    "address_street": data["address"]["street"],
+                    "address_suite": data["address"]["suite"],
+                    "address_city": data["address"]["city"],
+                    "address_zipcode": data["address"]["zipcode"],
+                    "geo_lat": float(data["address"]["geo"]["lat"]),
+                    "geo_lng": float(data["address"]["geo"]["lng"]),
+                    "phone": data["phone"],
+                    "website": data["website"],
+                    "company_name": data["company"]["name"],
+                    "company_catch_phrase": data["company"]["catchPhrase"],
+                    "company_bs": data["company"]["bs"],
+                },
+            )
+
+        return {"status": "success"}

@@ -1,7 +1,11 @@
+from pprint import pprint
+
+import requests
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from config import config
 from src.features.v1.posts.cruds import PostsCrud
 from src.features.v1.posts.types import ConditionPostType
 
@@ -152,3 +156,33 @@ class PostsController:
             )
 
         await PostsCrud(session).delete(request, id, obj)
+
+    @classmethod
+    async def exec_update(
+        cls,
+        request: Request,
+        session: AsyncSession,
+    ):
+        # 全件削除
+        await PostsCrud(session).delete_all(request)
+
+        # データ取得
+        response = requests.get("https://jsonplaceholder.typicode.com/posts")
+
+        if config.debug is True:
+            print(response.status_code)
+            pprint(response.json())
+
+        # データ追加
+        for data in response.json():
+            await PostsCrud(session).create(
+                request,
+                {
+                    "post_id": data["id"],
+                    "user_id": data["userId"],
+                    "title": data["title"],
+                    "body": data["body"],
+                },
+            )
+
+        return {"status": "success"}
