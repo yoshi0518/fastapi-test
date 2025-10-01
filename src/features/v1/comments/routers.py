@@ -231,3 +231,31 @@ async def delete(
         session,
         id,
     )
+
+
+@router_v1_comments.post(
+    "/update/",
+    summary="コメントを一括更新",
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        201: {
+            "content": {
+                "application/json": {
+                    "example": {"status": "success"},
+                },
+            },
+        },
+        401: {
+            "content": {
+                "application/json": {
+                    "example": {"detail": "Not authenticated"},
+                },
+            },
+        },
+    },
+)
+async def exec_update(
+    request: Request,
+    session: AsyncSession = Depends(get_db),
+):
+    return await CommentsController.exec_update(request, session)

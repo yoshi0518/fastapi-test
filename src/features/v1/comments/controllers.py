@@ -1,7 +1,11 @@
+from pprint import pprint
+
+import requests
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from config import config
 from src.features.v1.comments.cruds import CommentsCrud
 from src.features.v1.comments.types import ConditionCommentType
 
@@ -152,3 +156,34 @@ class CommentsController:
             )
 
         await CommentsCrud(session).delete(request, id, obj)
+
+    @classmethod
+    async def exec_update(
+        cls,
+        request: Request,
+        session: AsyncSession,
+    ):
+        # 全件削除
+        await CommentsCrud(session).delete_all(request)
+
+        # データ取得
+        response = requests.get("https://jsonplaceholder.typicode.com/comments")
+
+        if config.debug is True:
+            print(response.status_code)
+            pprint(response.json())
+
+        # データ追加
+        for data in response.json():
+            await CommentsCrud(session).create(
+                request,
+                {
+                    "comment_id": data["id"],
+                    "post_id": data["postId"],
+                    "name": data["name"],
+                    "email": data["email"],
+                    "body": data["body"],
+                },
+            )
+
+        return {"status": "success"}
