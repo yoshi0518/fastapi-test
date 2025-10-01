@@ -6,10 +6,16 @@ from starlette.middleware.cors import CORSMiddleware
 from config import config
 from src.features.v1 import router_v1
 
+TAGS = [
+    {"name": "v1", "description": "version 1"},
+    {"name": "v2", "description": "version 2"},
+]
+
 app = FastAPI(
     title=config.fastapi_title,
     version=config.fastapi_version,
     default_response_class=ORJSONResponse,
+    openapi_tags=TAGS,
 )
 
 # CORS設定
@@ -24,7 +30,7 @@ app.add_middleware(
 
 
 # Router設定
-app.include_router(router_v1, prefix="/v1")
+app.include_router(router_v1, prefix="/v1", tags=["v1"])
 
 
 if __name__ == "__main__":
