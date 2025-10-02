@@ -22,6 +22,11 @@ class Config(BaseSettings):
     # Cors
     cors_allow_origins: str = "http://localhost:3000"
 
+    # OAuth
+    oauth_user: str = "xxxxxxxxxx"
+    oauth_pass: str = "xxxxxxxxxx"
+    oauth_secret: str = "xxxxxxxxxx"
+
     # Neon
     neon_host: str = "xxxxxxxxxx"
     neon_db: str = "xxxxxxxxxx"
