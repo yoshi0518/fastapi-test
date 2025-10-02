@@ -11,11 +11,6 @@ Base = declarative_base()
 JST = timezone(timedelta(hours=9))
 
 
-def now_jst():
-    """Asia/Tokyoタイムゾーンで現在日時を取得"""
-    return datetime.now(JST)
-
-
 class BaseTable(Base):
     """BaseTable"""
 
@@ -25,13 +20,10 @@ class BaseTable(Base):
     created_at = Column(
         TIMESTAMP(timezone=True),
         nullable=False,
-        default=now_jst,
     )
     created_by = Column(VARCHAR(100), nullable=False)
     updated_at = Column(
         TIMESTAMP(timezone=True),
         nullable=False,
-        default=now_jst,
-        onupdate=now_jst,
     )
     updated_by = Column(VARCHAR(100), nullable=False)
