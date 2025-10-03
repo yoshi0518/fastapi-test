@@ -45,6 +45,12 @@ jobs:
           vercel env rm FASTAPI_TITLE production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           vercel env rm FASTAPI_VERSION production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           vercel env rm CORS_ALLOW_ORIGINS production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm OAUTH_USER production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm OAUTH_PASS production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm OAUTH_SECRET_KEY production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm OAUTH_ALGORITHM production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm OAUTH_EXPIRE_MINUTES_ACCESS_TOKEN production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm OAUTH_EXPIRE_MINUTES_REFRESH_TOKEN production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           vercel env rm NEON_HOST production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           vercel env rm NEON_DB production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           vercel env rm NEON_USER production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
@@ -55,6 +61,12 @@ jobs:
           echo -n "${{ secrets.FASTAPI_TITLE_PROD }}" | vercel env add FASTAPI_TITLE production --token=${{ secrets.VERCEL_TOKEN }}
           echo -n "${{ secrets.FASTAPI_VERSION }}" | vercel env add FASTAPI_VERSION production --token=${{ secrets.VERCEL_TOKEN }}
           echo -n "${{ secrets.CORS_ALLOW_ORIGINS }}" | vercel env add CORS_ALLOW_ORIGINS production --token=${{ secrets.VERCEL_TOKEN }}
+          echo -n "${{ secrets.OAUTH_USER }}" | vercel env add OAUTH_USER production --token=${{ secrets.VERCEL_TOKEN }}
+          echo -n "${{ secrets.OAUTH_PASS }}" | vercel env add OAUTH_PASS production --token=${{ secrets.VERCEL_TOKEN }}
+          echo -n "${{ secrets.OAUTH_SECRET_KEY }}" | vercel env add OAUTH_SECRET_KEY production --token=${{ secrets.VERCEL_TOKEN }}
+          echo -n "${{ secrets.OAUTH_ALGORITHM }}" | vercel env add OAUTH_ALGORITHM production --token=${{ secrets.VERCEL_TOKEN }}
+          echo -n "${{ secrets.OAUTH_EXPIRE_MINUTES_ACCESS_TOKEN }}" | vercel env add OAUTH_EXPIRE_MINUTES_ACCESS_TOKEN production --token=${{ secrets.VERCEL_TOKEN }}
+          echo -n "${{ secrets.OAUTH_EXPIRE_MINUTES_REFRESH_TOKEN }}" | vercel env add OAUTH_EXPIRE_MINUTES_REFRESH_TOKEN production --token=${{ secrets.VERCEL_TOKEN }}
           echo -n "${{ secrets.NEON_HOST }}" | vercel env add NEON_HOST production --token=${{ secrets.VERCEL_TOKEN }}
           echo -n "${{ secrets.NEON_DB }}" | vercel env add NEON_DB production --token=${{ secrets.VERCEL_TOKEN }}
           echo -n "${{ secrets.NEON_USER }}" | vercel env add NEON_USER production --token=${{ secrets.VERCEL_TOKEN }}
@@ -82,6 +94,12 @@ jobs:
           FASTAPI_TITLE: ${{ secrets.FASTAPI_TITLE_PROD }}
           FASTAPI_VERSION: ${{ secrets.FASTAPI_VERSION }}
           CORS_ALLOW_ORIGINS: ${{ secrets.CORS_ALLOW_ORIGINS }}
+          OAUTH_USER: ${{ secrets.OAUTH_USER }}
+          OAUTH_PASS: ${{ secrets.OAUTH_PASS }}
+          OAUTH_SECRET_KEY: ${{ secrets.OAUTH_SECRET_KEY }}
+          OAUTH_ALGORITHM: ${{ secrets.OAUTH_ALGORITHM }}
+          OAUTH_EXPIRE_MINUTES_ACCESS_TOKEN: ${{ secrets.OAUTH_EXPIRE_MINUTES_ACCESS_TOKEN }}
+          OAUTH_EXPIRE_MINUTES_REFRESH_TOKEN: ${{ secrets.OAUTH_EXPIRE_MINUTES_REFRESH_TOKEN }}
           NEON_HOST: ${{ secrets.NEON_HOST }}
           NEON_DB: ${{ secrets.NEON_DB }}
           NEON_USER: ${{ secrets.NEON_USER }}
@@ -98,6 +116,12 @@ jobs:
           FASTAPI_TITLE: ${{ secrets.FASTAPI_TITLE_PROD }}
           FASTAPI_VERSION: ${{ secrets.FASTAPI_VERSION }}
           CORS_ALLOW_ORIGINS: ${{ secrets.CORS_ALLOW_ORIGINS }}
+          OAUTH_USER: ${{ secrets.OAUTH_USER }}
+          OAUTH_PASS: ${{ secrets.OAUTH_PASS }}
+          OAUTH_SECRET_KEY: ${{ secrets.OAUTH_SECRET_KEY }}
+          OAUTH_ALGORITHM: ${{ secrets.OAUTH_ALGORITHM }}
+          OAUTH_EXPIRE_MINUTES_ACCESS_TOKEN: ${{ secrets.OAUTH_EXPIRE_MINUTES_ACCESS_TOKEN }}
+          OAUTH_EXPIRE_MINUTES_REFRESH_TOKEN: ${{ secrets.OAUTH_EXPIRE_MINUTES_REFRESH_TOKEN }}
           NEON_HOST: ${{ secrets.NEON_HOST }}
           NEON_DB: ${{ secrets.NEON_DB }}
           NEON_USER: ${{ secrets.NEON_USER }}
