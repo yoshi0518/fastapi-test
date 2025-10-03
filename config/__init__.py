@@ -25,7 +25,10 @@ class Config(BaseSettings):
     # OAuth
     oauth_user: str = "xxxxxxxxxx"
     oauth_pass: str = "xxxxxxxxxx"
-    oauth_secret: str = "xxxxxxxxxx"
+    oauth_secret_key: str = "xxxxxxxxxx"
+    oauth_algorithm: str = "HS256"
+    oauth_expire_minutes_access_token: int = 60
+    oauth_expire_minutes_refresh_token: int = 10080
 
     # Neon
     neon_host: str = "xxxxxxxxxx"

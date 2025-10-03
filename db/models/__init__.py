@@ -1,14 +1,10 @@
 import uuid
-from datetime import timedelta, timezone
 
 from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import TIMESTAMP, UUID, VARCHAR
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
-
-# Asia/Tokyoタイムゾーンを定義
-JST = timezone(timedelta(hours=9))
 
 
 class BaseTable(Base):
