@@ -5,6 +5,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from config import config
 from src.features.v1 import router_v1
+from src.features.v2 import router_v2
 
 TAGS = [
     {"name": "v1", "description": "version 1"},
@@ -31,6 +32,7 @@ app.add_middleware(
 
 # Router設定
 app.include_router(router_v1, prefix="/v1", tags=["v1"])
+app.include_router(router_v2, prefix="/v2", tags=["v2"])
 
 
 if __name__ == "__main__":
